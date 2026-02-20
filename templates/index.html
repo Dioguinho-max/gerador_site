@@ -1,36 +1,67 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Gerador de Senhas Seguro 💻</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>🔐 Gerador de Senhas Seguro</h1>
+from flask import Flask, render_template, request
+import secrets
+import string
 
-        <form method="POST">
-            <input type="number" name="tamanho" placeholder="Tamanho da senha" required>
-            <button type="submit">Gerar Senha</button>
-        </form>
+app = Flask(__name__)
 
-        {% if senha %}
-        <div class="resultado">
-            <p class="senha">{{ senha }}</p>
-            <p class="forca">Força: {{ forca }}</p>
-            <div class="botoes">
-                <button onclick="copiar()">Copiar 🔗</button>
-                <a href="{{ url_for('download', senha=senha) }}" class="download">Download 💾</a>
-            </div>
-        </div>
-        {% endif %}
-    </div>
+def gerar_senha(tamanho):
+    letras = string.ascii_letters
+    numeros = string.digits
+    simbolos = string.punctuation
 
-<script>
-function copiar() {
-    const senha = "{{ senha }}";
-    navigator.clipboard.writeText(senha);
-    alert("Senha copiada para a área de transferência!");
-}
-</script>
-</body>
-</html>
+    # Garante pelo menos 1 letra, 1 número e 1 símbolo
+    senha = [
+        secrets.choice(letras),
+        secrets.choice(numeros),
+        secrets.choice(simbolos)
+    ]
+
+    todos = letras + numeros + simbolos
+
+    for _ in range(tamanho - 3):
+        senha.append(secrets.choice(todos))
+
+    secrets.SystemRandom().shuffle(senha)
+    return ''.join(senha)
+
+def verificar_forca(senha):
+    pontos = 0
+    if len(senha) >= 8:
+        pontos += 1
+    if any(c.isdigit() for c in senha):
+        pontos += 1
+    if any(c in string.punctuation for c in senha):
+        pontos += 1
+    if any(c.isupper() for c in senha):
+        pontos += 1
+
+    niveis = ["Fraca ❌", "Média ⚠️", "Boa 👍", "Forte 🔥"]
+    return niveis[pontos-1]
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    senha = None
+    forca = None
+
+    if request.method == "POST":
+        dificuldade = request.form["dificuldade"]
+
+        # Define tamanho com base na dificuldade
+        if dificuldade == "facil":
+            tamanho = 6
+        elif dificuldade == "media":
+            tamanho = 10
+        elif dificuldade == "dificil":
+            tamanho = 14
+        elif dificuldade == "muito_dificil":
+            tamanho = 20
+        else:
+            tamanho = 10
+
+        senha = gerar_senha(tamanho)
+        forca = verificar_forca(senha)
+
+    return render_template("index.html", senha=senha, forca=forca)
+
+if __name__ == "__main__":
+    app.run(debug=True)
