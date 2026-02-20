@@ -13,7 +13,7 @@ body {
     background-color: #1f1f1f;
     padding: 40px;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0,255,0,0.5);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
     text-align: center;
     width: 350px;
 }
@@ -23,30 +23,21 @@ h1 {
     margin-bottom: 20px;
 }
 
-input {
+select, button {
     padding: 10px;
-    width: 70%;
+    width: 80%;
     border-radius: 5px;
     border: 1px solid #00ff99;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     background-color: #121212;
     color: #e0e0e0;
-}
-
-button, .download {
-    padding: 10px 15px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    background-color: #00ff99;
-    color: #000;
     font-weight: bold;
     cursor: pointer;
-    text-decoration: none;
 }
 
-button:hover, .download:hover {
+button:hover, select:hover {
     background-color: #00cc7a;
+    color: #000;
 }
 
 .resultado {
@@ -57,13 +48,10 @@ button:hover, .download:hover {
     font-size: 20px;
     color: #00ff99;
     word-break: break-all;
+    margin-bottom: 10px;
 }
 
 .forca {
-    margin-top: 5px;
     font-weight: bold;
-}
-
-.botoes {
-    margin-top: 10px;
+    margin-bottom: 10px;
 }
