@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gerador de Senhas Seguro 💻</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Gerador de Senhas Seguro</h1>
+
+        <form method="POST">
+            <input type="number" name="tamanho" placeholder="Tamanho da senha" required>
+            <button type="submit">Gerar Senha</button>
+        </form>
+
+        {% if senha %}
+        <div class="resultado">
+            <p class="senha">{{ senha }}</p>
+            <p class="forca">Força: {{ forca }}</p>
+            <div class="botoes">
+                <button onclick="copiar()">Copiar 🔗</button>
+                <a href="{{ url_for('download', senha=senha) }}" class="download">Download 💾</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+<script>
+function copiar() {
+    const senha = "{{ senha }}";
+    navigator.clipboard.writeText(senha);
+    alert("Senha copiada para a área de transferência!");
+}
+</script>
+</body>
+</html>
