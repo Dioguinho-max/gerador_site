@@ -1,8 +1,6 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request
 import secrets
 import string
-import io
-import urllib.parse
 
 app = Flask(__name__)
 
@@ -46,32 +44,24 @@ def index():
     forca = None
 
     if request.method == "POST":
-        tamanho = int(request.form["tamanho"])
+        dificuldade = request.form["dificuldade"]
+
+        # Define tamanho com base na dificuldade
+        if dificuldade == "facil":
+            tamanho = 6
+        elif dificuldade == "media":
+            tamanho = 10
+        elif dificuldade == "dificil":
+            tamanho = 14
+        elif dificuldade == "muito_dificil":
+            tamanho = 20
+        else:
+            tamanho = 10
+
         senha = gerar_senha(tamanho)
         forca = verificar_forca(senha)
 
     return render_template("index.html", senha=senha, forca=forca)
-
-@app.route("/download")
-def download():
-    senha = request.args.get("senha")
-    if not senha:
-        return "Nenhuma senha para baixar!", 400
-
-    # Cria arquivo em memória
-    buffer = io.BytesIO()
-    buffer.write(senha.encode("utf-8"))
-    buffer.seek(0)
-
-    # Encode no nome do arquivo para não quebrar com caracteres especiais
-    filename = urllib.parse.quote("senha.txt")
-
-    return send_file(
-        buffer,
-        as_attachment=True,
-        download_name=filename,
-        mimetype="text/plain"
-    )
 
 if __name__ == "__main__":
     app.run(debug=True)
